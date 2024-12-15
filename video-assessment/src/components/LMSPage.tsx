@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import VideoPlayer from './VideoPlayer';
 import Assessment from './Assessment';
 import { videoData } from '../data/videos';
+import { VideoData } from '../components/types';
 
 const LMSPage: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,7 +25,7 @@ const LMSPage: React.FC = () => {
 
   return (
     <div className="lms-page p-4">
-      {videoData.map((video, index) => (
+      {videoData.map((video: VideoData, index: number) => (
         <div key={video.id} className="task-section mb-8">
           <VideoPlayer videoUrl={video.videoUrl} onEnd={handleVideoEnd} />
           <div ref={(el) => (assessmentRefs.current[index] = el)}>

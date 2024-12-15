@@ -1,8 +1,8 @@
-
+// src/components/Assessment.tsx
 import React, { useState } from 'react';
 
 interface AssessmentProps {
-  type: 'multiple-choice' | 'short-answer';
+  type: 'short-answer' | 'multiple-choice';
   question: string;
   options?: string[];
   correctAnswer?: number;
@@ -13,10 +13,10 @@ const Assessment: React.FC<AssessmentProps> = ({ type, question, options, correc
   const [answer, setAnswer] = useState<string | number>('');
 
   const handleSubmit = () => {
-    if (type === 'multiple-choice') {
+    if (type === 'multiple-choice' && typeof correctAnswer === 'number') {
       const isCorrect = answer === correctAnswer;
       onComplete(isCorrect);
-    } else {
+    } else if (type === 'short-answer') {
       onComplete(true);
     }
   };

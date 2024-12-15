@@ -1,4 +1,7 @@
-export const videoData = [
+// src/data/videos.ts
+import { VideoData } from '../components/types';
+
+export const videoData: VideoData[] = [
   {
     id: 1,
     title: "Version Control with Git",
@@ -12,7 +15,7 @@ export const videoData = [
         "git create new_branch",
         "git init new_branch"
       ],
-      correctAnswer: "git branch new_branch"
+      correctAnswer: 0
     }
   },
   {
@@ -28,7 +31,7 @@ export const videoData = [
         "Deployment",
         "Planning"
       ],
-      correctAnswer: "Planning"
+      correctAnswer: 3
     }
   },
   {
@@ -44,24 +47,7 @@ export const videoData = [
         "Customer collaboration",
         "Single development cycle"
       ],
-      correctAnswer: "Customer collaboration"
-    }
-  },
-  {
-    id: 4,
-    title: "Version Control with Git",
-    videoUrl: "https://www.youtube.com/embed/8JJ101D3knE",
-    assessment: {
-      type: "multiple-choice",
-      question: "What is the command to create a new branch in Git?",
-      options: [
-        "git branch new_branch",
-        "git checkout new_branch",
-        "git create new_branch",
-        "git init new_branch"
-      ],
-      correctAnswer: "git branch new_branch"
+      correctAnswer: 2
     }
   }
-  
 ];
