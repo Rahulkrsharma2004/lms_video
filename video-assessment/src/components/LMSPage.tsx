@@ -1,54 +1,162 @@
-// src/components/LMSPage.tsx
-import React, { useState, useRef } from 'react';
-import VideoPlayer from './VideoPlayer';
+import React, { useState, useEffect, useRef } from 'react';
 import Assessment from './Assessment';
-import { videoData } from '../data/videos';
-import { VideoData } from '../components/types';
+import dummyData from '../data/videos.json'; // Importing dummy JSON data
 
-const LMSPage: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const assessmentRefs = useRef<(HTMLDivElement | null)[]>([]);
+interface Lesson {
+  id: number;
+  videoUrl: string;
+  question: string;
+  type: 'short-answer' | 'multiple-choice';
+  options?: string[];
+  correctAnswer?: number;
+}
 
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
+const LMS: React.FC = () => {
+  const [currentLesson, setCurrentLesson] = useState<number>(0);
+  const [isAssessmentComplete, setIsAssessmentComplete] = useState<boolean>(false);
+  const [isAllLessonsCompleted, setIsAllLessonsCompleted] = useState<boolean>(false);
+  const videoRef = useRef<HTMLIFrameElement>(null);
+  const [isYouTubeApiReady, setIsYouTubeApiReady] = useState<boolean>(false);
+
+  // Handle video end
   const handleVideoEnd = () => {
-    assessmentRefs.current[currentIndex]?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleAssessmentComplete = (isCorrect: boolean) => {
-    if (isCorrect) {
-      if (currentIndex < videoData.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      }
-    } else {
-      alert('Please try again.');
+    const assessmentElement = document.getElementById(`assessment-${currentLesson}`);
+    if (assessmentElement) {
+      assessmentElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
+  // Complete assessment
+  const handleComplete = (isCorrect: boolean) => {
+    setIsAssessmentComplete(true);
+  };
+
+  // Go to next task (lesson)
+  const handleNextTask = () => {
+    if (currentLesson + 1 < dummyData.length) {
+      setCurrentLesson((prev) => prev + 1);
+      setIsAssessmentComplete(false);
+      const nextLessonElement = document.getElementById(`lesson-${currentLesson + 1}`);
+      if (nextLessonElement) {
+        nextLessonElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      setIsAllLessonsCompleted(true); // Mark all lessons as completed
+    }
+  };
+
+  // Back to Home functionality
+  const handleBackToHome = () => {
+    setIsAllLessonsCompleted(false); // Reset and go back to first lesson
+    setCurrentLesson(0);
+    const firstLessonElement = document.getElementById('lesson-0');
+    if (firstLessonElement) {
+      firstLessonElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Load YouTube API
+  useEffect(() => {
+    const loadYouTubeApi = () => {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
+    };
+
+    const onYouTubeIframeAPIReady = () => {
+      setIsYouTubeApiReady(true);
+    };
+
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+    if (!window.YT) {
+      loadYouTubeApi();
+    } else {
+      setIsYouTubeApiReady(true);
+    }
+  }, []);
+
+  // Initialize YouTube player
+  useEffect(() => {
+    if (isYouTubeApiReady && videoRef.current) {
+      const iframe = videoRef.current;
+      const player = new window.YT.Player(iframe, {
+        events: {
+          onStateChange: (event: any) => {
+            if (event.data === window.YT.PlayerState.ENDED) {
+              handleVideoEnd();
+            }
+          }
+        }
+      });
+    }
+  }, [currentLesson, isYouTubeApiReady]);
+
+  const lessons: Lesson[] = dummyData as Lesson[];
+
   return (
-    <div className="lms-page p-4">
-      {videoData.map((video: VideoData, index: number) => (
-        <div key={video.id} className="task-section mb-8">
-          <VideoPlayer videoUrl={video.videoUrl} onEnd={handleVideoEnd} />
-          <div ref={(el) => (assessmentRefs.current[index] = el)}>
-            <Assessment
-              type={video.assessment.type}
-              question={video.assessment.question}
-              options={video.assessment.options}
-              correctAnswer={video.assessment.correctAnswer}
-              onComplete={handleAssessmentComplete}
-            />
+    <div className="container mx-auto p-4">
+      {lessons.map((lesson: Lesson, index: number) => (
+        <div
+          key={lesson.id}
+          id={`lesson-${index}`}
+          className={`mb-8 ${index !== currentLesson ? 'hidden' : ''}`}
+        >
+          <div className="video-wrapper mb-4">
+            <iframe
+              ref={index === currentLesson ? videoRef : null}
+              width="100%"
+              height="480"
+              src={lesson.videoUrl}
+              frameBorder="0"
+              allowFullScreen
+              className="w-full rounded-lg shadow-lg"
+              title={`Lesson ${index + 1}`}
+            ></iframe>
           </div>
-          {index === currentIndex && (
-            <button
-              onClick={() => setCurrentIndex(currentIndex + 1)}
-              className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-            >
-              Next Task
-            </button>
+          {index === currentLesson && (
+            <div id={`assessment-${index}`} className="bg-white p-6 rounded-lg shadow-md">
+              <Assessment
+                type={lesson.type}
+                question={lesson.question}
+                options={lesson.options}
+                correctAnswer={lesson.correctAnswer}
+                onComplete={handleComplete}
+              />
+              {isAssessmentComplete && (
+                <button
+                  onClick={handleNextTask}
+                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                >
+                  Next Task
+                </button>
+              )}
+            </div>
           )}
         </div>
       ))}
+      {isAllLessonsCompleted && (
+        <div className="text-center mt-8">
+          <h2 className="text-2xl font-bold">Congratulations!</h2>
+          <p className="mt-4">You have completed all the lessons.</p>
+          <button
+            onClick={handleBackToHome}
+            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          >
+            Back to Home
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default LMSPage;
+export default LMS;

@@ -1,4 +1,3 @@
-// src/components/Assessment.tsx
 import React, { useState } from 'react';
 
 interface AssessmentProps {
@@ -22,12 +21,12 @@ const Assessment: React.FC<AssessmentProps> = ({ type, question, options, correc
   };
 
   return (
-    <div className="assessment mt-4 p-4 border rounded-lg bg-gray-100">
-      <p className="font-semibold mb-2">{question}</p>
+    <div className="assessment mt-4 p-6 border rounded-lg bg-white shadow-md">
+      <p className="font-semibold mb-4 text-lg">{question}</p>
       {type === 'multiple-choice' && options && (
         <div className="mb-4">
           {options.map((option, index) => (
-            <label key={index} className="block mb-2">
+            <label key={index} className="block mb-2 cursor-pointer">
               <input
                 type="radio"
                 name="option"
@@ -44,10 +43,14 @@ const Assessment: React.FC<AssessmentProps> = ({ type, question, options, correc
         <textarea
           value={answer as string}
           onChange={(e) => setAnswer(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          rows={4}
         />
       )}
-      <button onClick={handleSubmit} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">
+      <button
+        onClick={handleSubmit}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+      >
         Submit
       </button>
     </div>

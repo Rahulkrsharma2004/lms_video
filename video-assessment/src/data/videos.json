@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "videoUrl": "https://www.youtube.com/embed/w7ejDZ8SWv8",
+    "question": "What is the primary purpose of React JS?",
+    "type": "multiple-choice",
+    "options": ["To handle backend logic", "To build user interfaces", "To style web pages", "To manage databases"],
+    "correctAnswer": 1
+  },
+  {
+    "id": 2,
+    "videoUrl": "https://www.youtube.com/embed/W6NZfCO5SIk",
+    "question": "What is a closure in JavaScript?",
+    "type": "short-answer",
+    "options": [],
+    "correctAnswer": null
+  },
+  {
+    "id": 3,
+    "videoUrl": "https://www.youtube.com/embed/jV8B24rSN5o",
+    "question": "Which CSS property is used to define a grid container?",
+    "type": "multiple-choice",
+    "options": ["display: grid", "grid-template", "grid-layout", "grid"],
+    "correctAnswer": 0
+  },
+  {
+    "id": 4,
+    "videoUrl": "https://www.youtube.com/embed/fBNz5xF-Kx4",
+    "question": "What is Node.js primarily used for?",
+    "type": "multiple-choice",
+    "options": ["Building user interfaces", "Running server-side scripts", "Styling web pages", "Managing databases"],
+    "correctAnswer": 1
+  },
+  {
+    "id": 5,
+    "videoUrl": "https://www.youtube.com/embed/UB1O30fR-EE",
+    "question": "What does Sass stand for?",
+    "type": "short-answer",
+    "options": [],
+    "correctAnswer": null
+  }
+]
