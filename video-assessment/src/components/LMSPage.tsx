@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Assessment from './Assessment';
-import dummyData from '../data/videos.json'; // Importing dummy JSON data
+import Assessment from './Assessment'; 
+import dummyData from '../data/videos.json'; 
 
 interface Lesson {
   id: number;
@@ -120,10 +120,14 @@ const LMS: React.FC = () => {
               allowFullScreen
               className="w-full rounded-lg shadow-lg"
               title={`Lesson ${index + 1}`}
+              style={{ border: 'none' }}
+              allow="autoplay; encrypted-media"
             ></iframe>
           </div>
+
+          {/* Assessment Section */}
           {index === currentLesson && (
-            <div id={`assessment-${index}`} className="bg-white p-6 rounded-lg shadow-md">
+            <div id={`assessment-${index}`} className="bg-white p-6 rounded-lg shadow-md mt-6">
               <Assessment
                 type={lesson.type}
                 question={lesson.question}
@@ -134,7 +138,7 @@ const LMS: React.FC = () => {
               {isAssessmentComplete && (
                 <button
                   onClick={handleNextTask}
-                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  className="mt-4 px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
                 >
                   Next Task
                 </button>
@@ -143,6 +147,8 @@ const LMS: React.FC = () => {
           )}
         </div>
       ))}
+
+      {/* End of All Lessons */}
       {isAllLessonsCompleted && (
         <div className="text-center mt-8">
           <h2 className="text-2xl font-bold">Congratulations!</h2>
