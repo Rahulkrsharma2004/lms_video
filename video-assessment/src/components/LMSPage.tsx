@@ -88,6 +88,7 @@ const LMS: React.FC = () => {
   useEffect(() => {
     if (isYouTubeApiReady && videoRef.current) {
       const iframe = videoRef.current;
+      console.log(iframe)
       const player = new window.YT.Player(iframe, {
         events: {
           onStateChange: (event: any) => {
