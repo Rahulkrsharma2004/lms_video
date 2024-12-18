@@ -10,13 +10,22 @@ interface AssessmentProps {
 
 const Assessment: React.FC<AssessmentProps> = ({ type, question, options, correctAnswer, onComplete }) => {
   const [answer, setAnswer] = useState<string | number>('');
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const handleSubmit = () => {
+    let isCorrect = false;
+
     if (type === 'multiple-choice' && typeof correctAnswer === 'number') {
-      const isCorrect = answer === correctAnswer;
-      onComplete(isCorrect);
+      isCorrect = answer === correctAnswer;
     } else if (type === 'short-answer') {
+      isCorrect = (answer as string).trim() !== '';
+    }
+
+    if (isCorrect) {
+      setFeedback(null);
       onComplete(true);
+    } else {
+      setFeedback('Wrong answer. Please try again.');
     }
   };
 
@@ -53,6 +62,7 @@ const Assessment: React.FC<AssessmentProps> = ({ type, question, options, correc
       >
         Submit
       </button>
+      {feedback && <p className="mt-2 text-red-500">{feedback}</p>}
     </div>
   );
 };

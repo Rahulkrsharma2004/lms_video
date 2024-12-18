@@ -1,4 +1,4 @@
-/* App.css */
+App.css
 body {
     font-family: 'Arial', sans-serif;
   }
@@ -8,11 +8,11 @@ body {
     margin: auto;
   }
   
-  .video-wrapper {
+  /* .video-wrapper {
     position: relative;
     padding-bottom: 56.25%;
     height: 0;
-  }
+  } */
   
   video-wrapper iframe {
     position: absolute;
