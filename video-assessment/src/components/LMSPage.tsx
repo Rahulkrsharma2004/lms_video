@@ -1,80 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react'
-import Assessment from './Assessment'
-import dummyData from '../data/videos.json'
+import React, { useState, useEffect, useRef } from 'react';
+import Assessment from './Assessment';
+import dummyData from '../data/videos.json';
 
 interface Lesson {
-  id: number
-  videoUrl: string
-  question: string
-  type: 'short-answer' | 'multiple-choice'
-  options?: string[]
-  correctAnswer?: number
+  id: number;
+  videoUrl: string;
+  question: string;
+  type: 'short-answer' | 'multiple-choice';
+  options?: string[];
+  correctAnswer?: number;
 }
 
 declare global {
   interface Window {
-    YT: any
-    onYouTubeIframeAPIReady: () => void
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
   }
 }
 
 const LMS: React.FC = () => {
-  const [currentLesson, setCurrentLesson] = useState<number>(0)
-  const [isAssessmentComplete, setIsAssessmentComplete] =
-    useState<boolean>(false)
-  const videoRefs = useRef<HTMLIFrameElement[]>([])
-  const [isYouTubeApiReady, setIsYouTubeApiReady] = useState<boolean>(false)
+  const [currentLesson, setCurrentLesson] = useState<number>(0);
+  const [isAssessmentComplete, setIsAssessmentComplete] = useState<boolean>(false);
+  console.log(isAssessmentComplete)
+  const videoRefs = useRef<HTMLIFrameElement[]>([]);
+  const [isYouTubeApiReady, setIsYouTubeApiReady] = useState<boolean>(false);
 
   // Handle video end
   const handleVideoEnd = (index: number) => {
-    const assessmentElement = document.getElementById(`assessment-${index}`)
+    const assessmentElement = document.getElementById(`assessment-${index}`);
     if (assessmentElement) {
-      assessmentElement.scrollIntoView({ behavior: 'smooth' })
+      assessmentElement.scrollIntoView({ behavior: 'smooth' });
     }
-  }
+  };
 
   // Complete assessment
   const handleComplete = (isCorrect: boolean) => {
     if (isCorrect) {
-      const nextLessonIndex = currentLesson + 1
+      const nextLessonIndex = currentLesson + 1;
       if (nextLessonIndex < dummyData.length) {
-        setCurrentLesson(nextLessonIndex)
-        const nextLessonElement = document.getElementById(
-          `lesson-${nextLessonIndex}`
-        )
+        setCurrentLesson(nextLessonIndex);
+        const nextLessonElement = document.getElementById(`lesson-${nextLessonIndex}`);
         if (nextLessonElement) {
-          nextLessonElement.scrollIntoView({ behavior: 'smooth' })
+          nextLessonElement.scrollIntoView({ behavior: 'smooth' });
         }
       } else {
-        setIsAssessmentComplete(true)
-        // Remove the scrolling to 'congratulations' element here
+        setIsAssessmentComplete(true);
       }
     } else {
-      alert('Incorrect answer, please try again.')
+      alert('Incorrect answer, please try again.');
     }
-  }
+  };
 
   // Load YouTube API
   useEffect(() => {
     const loadYouTubeApi = () => {
-      const tag = document.createElement('script')
-      tag.src = 'https://www.youtube.com/iframe_api'
-      const firstScriptTag = document.getElementsByTagName('script')[0]
-      firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag)
-    }
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
+    };
 
     const onYouTubeIframeAPIReady = () => {
-      setIsYouTubeApiReady(true)
-    }
+      setIsYouTubeApiReady(true);
+    };
 
-    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady
+    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
     if (!window.YT) {
-      loadYouTubeApi()
+      loadYouTubeApi();
     } else {
-      setIsYouTubeApiReady(true)
+      setIsYouTubeApiReady(true);
     }
-  }, [])
+  }, []);
 
   // Initialize YouTube player
   useEffect(() => {
@@ -85,17 +82,29 @@ const LMS: React.FC = () => {
             events: {
               onStateChange: (event: any) => {
                 if (event.data === window.YT.PlayerState.ENDED) {
-                  handleVideoEnd(index)
+                  handleVideoEnd(index);
                 }
               },
             },
-          })
+          });
         }
-      })
+      });
     }
-  }, [isYouTubeApiReady, currentLesson])
+  }, [isYouTubeApiReady, currentLesson]);
 
-  const lessons: Lesson[] = dummyData as Lesson[]
+  const lessons: Lesson[] = dummyData as Lesson[];
+
+  // Handle 'Next Task' button click
+  const handleNextTask = () => {
+    const nextLessonIndex = currentLesson + 1;
+    if (nextLessonIndex < lessons.length) {
+      setCurrentLesson(nextLessonIndex);
+      const nextLessonElement = document.getElementById(`lesson-${nextLessonIndex}`);
+      if (nextLessonElement) {
+        nextLessonElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
 
   return (
     <div className='container mx-auto p-4'>
@@ -106,8 +115,8 @@ const LMS: React.FC = () => {
               ref={(el) => (videoRefs.current[index] = el!)}
               width='100%'
               height='430'
-              src={`${lesson.videoUrl}`}
-              // frameBorder='0'
+              src={`${lesson.videoUrl}?modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&fs=0&controls=1`}
+              frameBorder='0'
               allowFullScreen
               className='w-full rounded-lg shadow-lg'
               style={{ border: 'none' }}
@@ -126,29 +135,30 @@ const LMS: React.FC = () => {
               options={lesson.options}
               correctAnswer={lesson.correctAnswer}
               onComplete={handleComplete}
+              onNext={handleNextTask}
+              isLastAssessment={index === dummyData.length - 1}
             />
           </div>
         </div>
       ))}
-      <div id='congratulations' className='text-center mt-8'>
-        {/* <h2 className="text-2xl font-bold">Congratulations!</h2>
-          <p className="mt-4">You have completed all the lessons.</p> */}
-        <button
-          onClick={() => {
-            setCurrentLesson(0)
-            setIsAssessmentComplete(false)
-            const firstLessonElement = document.getElementById('lesson-0')
-            if (firstLessonElement) {
-              firstLessonElement.scrollIntoView({ behavior: 'smooth' })
-            }
-          }}
-          className='mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition'
-        >
-          Back to Home
-        </button>
-      </div>
-    </div>
-  )
-}
 
-export default LMS
+        <div id='congratulations' className='text-center mt-8'>
+          <button
+            onClick={() => {
+              setCurrentLesson(0);
+              setIsAssessmentComplete(false);
+              const firstLessonElement = document.getElementById('lesson-0');
+              if (firstLessonElement) {
+                firstLessonElement.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className='mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition'
+          >
+            Back to Home
+          </button>
+        </div>
+    </div>
+  );
+};
+
+export default LMS;
