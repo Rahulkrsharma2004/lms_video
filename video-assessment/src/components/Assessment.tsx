@@ -40,18 +40,18 @@ const Assessment: React.FC<AssessmentProps> = ({
   }
 
   return (
-    <div className='assessment mt-4 p-6 border rounded-lg bg-white shadow-md'>
-      <p className='font-semibold mb-4 text-lg'>{question}</p>
+    <div className='assessment mt-6 p-6 border-2 rounded-xl bg-gradient-to-r from-blue-100 to-indigo-200 shadow-lg'>
+      <p className='font-semibold mb-4 text-xl text-gray-800'>{question}</p>
       {type === 'multiple-choice' && options && (
-        <div className='mb-4'>
+        <div className='mb-4 space-y-3'>
           {options.map((option, index) => (
-            <label key={index} className='block mb-2 cursor-pointer'>
+            <label key={index} className='block cursor-pointer text-lg text-gray-700 hover:text-blue-600'>
               <input
                 type='radio'
                 name='option'
                 value={index}
                 onChange={() => setAnswer(index)}
-                className='mr-2'
+                className='mr-3 rounded-full border-gray-300 hover:bg-blue-500'
               />
               {option}
             </label>
@@ -62,28 +62,28 @@ const Assessment: React.FC<AssessmentProps> = ({
         <textarea
           value={answer as string}
           onChange={(e) => setAnswer(e.target.value)}
-          className='w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+          className='w-full p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
           rows={4}
         />
       )}
-      <div className='flex justify-between mt-4'>
+      <div className='flex justify-between mt-6'>
         <button
           onClick={handleSubmit}
-          className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition'
+          className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300'
         >
           Submit
         </button>
         <button
           onClick={onNext}
-          className={`px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition ${
-            isLastAssessment ? 'cursor-not-allowed' : 'cursor-pointer'
+          className={`px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 ${
+            isLastAssessment ? 'cursor-not-allowed bg-gray-500' : 'cursor-pointer'
           }`}
           disabled={isLastAssessment}
         >
-          Next Task
+          {isLastAssessment ? 'Complete' : 'Next Task'}
         </button>
       </div>
-      {feedback && <p className='mt-2 text-red-500'>{feedback}</p>}
+      {feedback && <p className='mt-3 text-red-600 text-lg'>{feedback}</p>}
     </div>
   )
 }
