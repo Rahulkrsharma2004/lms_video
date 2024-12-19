@@ -21,6 +21,7 @@ declare global {
 const LMS: React.FC = () => {
   const [currentLesson, setCurrentLesson] = useState<number>(0);
   const [isAssessmentComplete, setIsAssessmentComplete] = useState<boolean>(false);
+  console.log(isAssessmentComplete)
   const videoRefs = useRef<HTMLIFrameElement[]>([]);
   const [isYouTubeApiReady, setIsYouTubeApiReady] = useState<boolean>(false);
   const ytPlayers = useRef<any[]>([]);
@@ -109,7 +110,7 @@ const LMS: React.FC = () => {
       { threshold: 0.5 }
     );
 
-    videoRefs.current.forEach((iframe, index) => {
+    videoRefs.current.forEach((iframe) => {
       if (iframe) {
         observer.observe(iframe);
       }
